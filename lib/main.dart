@@ -35,10 +35,14 @@ class AddPedidoScreen extends StatefulWidget {
 
 class _AddPedidoScreenState extends State<AddPedidoScreen> {
   TextEditingController _clienteController = TextEditingController();
+  TextEditingController _bebidaController = TextEditingController();
+  TextEditingController _acompanhamentoController = TextEditingController();
 
   @override
   void dispose() {
     _clienteController.dispose();
+    _bebidaController.dispose();
+    _acompanhamentoController.dispose();
     super.dispose();
   }
 
@@ -50,49 +54,107 @@ class _AddPedidoScreenState extends State<AddPedidoScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _clienteController,
-              decoration: InputDecoration(
-                labelText: 'Nome do Cliente',
+      body: Row(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.purple[800],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/2.png'),
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                await _addPedido(_clienteController.text);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Pedido adicionado com sucesso!'),
-                ));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF4ABEFF),
-              ),
-              child: Text(
-                'Adicionar Pedido',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 24,
-                  color: Colors.white,
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: _clienteController,
+                      decoration: InputDecoration(
+                        labelText: 'Nome do Cliente',
+                      ),
+                    ),
+                    TextField(
+                      controller: _bebidaController,
+                      decoration: InputDecoration(
+                        labelText: 'Bebida',
+                      ),
+                    ),
+                    TextField(
+                      controller: _acompanhamentoController,
+                      decoration: InputDecoration(
+                        labelText: 'Acompanhamento',
+                      ),
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: 'Aguardando',
+                      decoration: InputDecoration(
+                        labelText: 'Status Pedido',
+                      ),
+                      items: [
+                        'Aguardando',
+                        'Pago',
+                        'Cancelado',
+                      ]
+                          .map((e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(e),
+                              ))
+                          .toList(),
+                      onChanged: (value) => print(value),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _addPedido(
+                          _clienteController.text,
+                          _bebidaController.text,
+                          _acompanhamentoController.text,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Pedido adicionado com sucesso!'),
+                        ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple[800],
+                      ),
+                      child: Text(
+                        'Adicionar Pedido',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Future<void> _addPedido(String nomeCliente) async {
+  Future<void> _addPedido(
+    String nomeCliente,
+    String bebida,
+    String acompanhamento,
+  ) async {
     final now = DateTime.now();
     final formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     final pedido = {
       'id': Uuid().v4(),
-      'Bebida': 'Café',
-      'Acompanhamento': 'Acompanhamento',
+      'Bebida': bebida,
+      'Acompanhamento': acompanhamento,
       'StatusPedido': 'Aguardando', // ou 'Aprovado' ou 'Cancelado'
       'DataPed': formattedDate,
       'NomeCli': nomeCliente,
