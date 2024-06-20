@@ -69,7 +69,7 @@ class _AddPedidoScreenState extends State<AddPedidoScreen> {
           ),
           Expanded(
             child: Container(
-              color: Colors.black,
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
